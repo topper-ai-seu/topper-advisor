@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Window</title>
+  <!-- Using Flask's url_for to correctly point to static files -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <!-- Additional styles and fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap">
+</head>
+<body>
+  <div class="main-window">
+    <main class="initial-greeting">
+      <section class="window-header">
+        <div class="header-name-avatar">
+          <img class="header-avatar-icon" loading="lazy" alt="" src="{{ url_for('static', filename='headeravatar@2x.png') }}">
+          <div class="topper-advisor">Topper Advisor</div>
+        </div>
+        <div class="header-buttons">
+          <div class="cancel">
+            <img class="cancel-child" loading="lazy" alt="" src="{{ url_for('static', filename='group-4.svg') }}">
+          </div>
+        </div>
+      </section>
+      <section class="conversation">
+        <div class="chat-panel">
+          <div class="message">
+            <div class="advisor-icon">
+              <img class="topper-avatar-icon" loading="lazy" alt="" src="{{ url_for('static', filename='topperavatar@2x.png') }}">
+            </div>
+            <div class="chat-bubble-topper">
+              <div class="hello-im-topper-container">
+                <p class="hello-im-topper">Hello, I'm Topper, your AI Academic Advisor. I'm here to make your elective selection exciting and tailored just for you!</p>
+                <p class="blank-line">&nbsp;</p>
+                <p class="choose-an-option">Choose an option or enter your own below.</p>
+              </div>
+            </div>
+          </div>
+          <div class="message1">
+            <div class="student-icon">
+              <img class="student-avatar-icon" loading="lazy" alt="" src="{{ url_for('static', filename='studentavatar.svg') }}">
+            </div>
+            <div class="chat-bubble-student">
+              <button class="button">
+                <div class="communications-public">Communications & Public Relations</div>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="in-chat-prompt-options">
+          <div class="option-buttons">
+            <div class="button1" id="buttonContainer">
+              <div class="option">Find electives that fit my existing schedule</div>
+            </div>
+            <div class="button2" id="buttonContainer1">
+              <div class="option1">What courses can I take at night?</div>
+            </div>
+          </div>
+          <div class="opt-c-d">
+            <div class="opt-c" id="optCContainer">
+              <div class="option2">What courses are available online?</div>
+            </div>
+            <div class="opt-d" id="optDContainer">
+              <div class="option3">What electives are worth 3 credits?</div>
+            </div>
+          </div>
+          <div class="text-input">
+            <div class="text-area">
+              <input class="text" placeholder="Placeholder message here..." type="text">
+              <div class="text-send">
+                <img class="send-icon" alt="" src="{{ url_for('static', filename='send.svg') }}">
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      // JavaScript for handling button interactions
+      document.addEventListener('DOMContentLoaded', function() {
+        ['buttonContainer', 'buttonContainer1', 'optCContainer', 'optDContainer'].forEach(id => {
+          const button = document.getElementById(id);
+          if (button) {
+            button.addEventListener('click', function() {
+              console.log('Button clicked: ', button.textContent);
+              // Additional logic here
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+
