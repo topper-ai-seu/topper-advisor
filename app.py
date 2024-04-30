@@ -21,7 +21,7 @@ def process_message():
     
     # Process the message here by sending it to OpenAI's API
     response = openai.Completion.create(
-        engine="text-davinci-003",  # Specify the appropriate engine
+        engine="text-davinci-003",
         prompt=message,
         max_tokens=150
     )
