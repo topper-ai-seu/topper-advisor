@@ -9,12 +9,6 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# Retrieve API key from environment variable
-openai_api_key = os.getenv('OPENAI_API_KEY')
-
-# Instantiate the client
-client = openai.OpenAI(api_key=openai_api_key)
-
 # HTML template for the homepage
 HTML = """
 <!DOCTYPE html>
