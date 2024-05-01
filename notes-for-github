@@ -25,6 +25,7 @@ bash
 Copy code
 
 git commit -m "A clear, concise commit message"
+git commit -m "updating repo"
 
 git commit -m "updating from local"
 git commit -m "update four"
