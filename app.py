@@ -6,8 +6,7 @@ import os
 # Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
+
 
 # HTML template for the homepage
 HTML = """
