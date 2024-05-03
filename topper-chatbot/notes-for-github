@@ -48,4 +48,6 @@ Handle Merge Conflicts: If there are conflicts when merging, resolve them as nee
 
 
 To Activate Virtual Enviroment
-source /workspaces/topper-advisor/topper-chatbot/venv/bin/activate
+source /workspaces/topper-advisor/.venv/bin/activate
+
+
