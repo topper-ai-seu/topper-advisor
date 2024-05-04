@@ -1,78 +1,77 @@
 import os
-from flask import Flask, request, session, url_for, render_template
+import time
+from flask import Flask, request, render_template
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 
-print("\r\nIn program...\r\n")
+app = Flask(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__)
-app.secret_key = os.urandom(24)
+# Fetch environment variables
+api_key = os.getenv("OPENAI_API_KEY")
+assistant_id = os.getenv("ASSISTANT_ID")
+organization = os.getenv("organization")
 
-print("\r\nCreating client...\r\n")
+# Initialize OpenAI client
+try:
+    client = OpenAI(api_key=api_key, organization=organization)
+except OpenAIError as e:
+    app.logger.error(f"Failed to initialize OpenAI client: {e}")
+    raise
 
-
-# Instantiate the OpenAI client
-connection = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-
-# Define the default route to return the index.html file
 @app.route("/")
 def index():
-    print("\r\nIn index()...\r\n")
-    if 'chat_history' not in session:
-        session['chat_history'] = [
-            {'role': 'bot', 'content': "Hello, I'm Topper, your AI Academic Advisor. I'm here to make your elective selection exciting and tailored just for you!", 'avatar': url_for('static', filename='bot-ava.png')}
-        ]
-    chat_history = session['chat_history']
-    return render_template("index.html", chat_history=chat_history)
+    return render_template("index.html", messages=[])
 
-# # Define the /api route to handle POST requests
-# @app.route("/api", methods=["POST"])
-# def api():
-#     print("\r\nIn api()...\r\n")
-#     message = request.json.get("message")
-#     print('Submitting request:' + request)
-#     try:
-#         completion = client.Completion.create(
-#             model="gpt-3.5-turbo",
-#             messages=[{"role": "user", "content": message}]
-#         )
-#         print('Completion: ' + completion)
-#         response_text = completion.choices[0].text if completion.choices else "Failed to generate response!"
-#     except Exception as e:
-#         response_text = f"An error occurred: {str(e)}"
-
-#     return response_text
-
-@app.route('/', methods=['GET', 'POST'])
-def home():
-    print("\r\nIn home()...\r\n")
-    if request.method == 'POST':
-        user_input = request.form['input']
-        print('Submitting request:' + user_input)
+@app.route("/solve_quadratic", methods=["GET", "POST"])
+def solve_quadratic():
+    if request.method == "POST":
         try:
-            completion = connection.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": user_input}]
+            # Create a new thread
+            thread = client.beta.threads.create()
+            print("Thread ID:", thread.id)
+
+            # Adding a user message to the thread
+            user_content = request.form.get('input', 'Default question')
+            message = client.beta.threads.messages.create(
+                thread_id=thread.id,
+                role="user",
+                content=user_content
             )
-            print('Completion recieved: ' + str(completion))
-            if completion.choices:
-                response = completion.choices[0].message.content
-            else:
-                response = "Sorry, I couldn't generate a response. Please try again."
-        except Exception as e:
-            response = f"An error occurred: {str(e)}"
 
-        session['chat_history'].append({'role': 'user', 'content': user_input, 'avatar': url_for('static', filename='user-ava.png')})
-        session['chat_history'].append({'role': 'bot', 'content': response, 'avatar': url_for('static', filename='bot-ava.png')})
-        session.modified = True
+            # Create a run using the new assistant ID
+            run = client.beta.threads.runs.create(
+                thread_id=thread.id,
+                assistant_id=assistant_id
+            )
 
-    chat_history = session['chat_history']
-    return render_template("index.html", chat_history=chat_history)
+            # Wait for the run to complete and fetch its status
+            run = wait_on_run(run, thread)
+            print("Run status:", run.status)
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+            # Retrieve all the messages after the run is completed
+            messages = client.beta.threads.messages.list(thread_id=thread.id)
+            response_messages = [msg.content[0].text.value for msg in messages.data if msg.role == 'assistant']
+            return render_template("index.html", messages=response_messages)
 
+        except OpenAIError as e:
+            app.logger.error(f"Error during processing: {e}")
+            return str(e), 500
+    else:
+        # Just show the initial form when the page is accessed via GET
+        return render_template("index.html", messages=[])
+
+def wait_on_run(run, thread):
+    while run.status in ["queued", "in_progress"]:
+        run = client.beta.threads.runs.retrieve(
+            thread_id=thread.id,
+            run_id=run.id
+        )
+        time.sleep(0.5)
+    return run
+
+if __name__ == "__main__":
+    app.run(debug=True)
 

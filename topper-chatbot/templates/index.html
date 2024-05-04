@@ -5,26 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chatbot</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        
-    </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="header">
-            <img class="img-heading" src="/static/bot-ava.png" alt="">
+            <img class="img-heading" src="{{ url_for('static', filename='bot-ava.png') }}" alt="Bot Avatar">
             <h1 class="chat-heading">Topper Advisor</h1>
         </div>
         <div class="messages" id="messages">
-            {% for message in chat_history %}
-                <div class="message {% if message.role == 'bot' %} bot {% else %} user {% endif %}">
-                    <img src="{{ message.avatar }}" class="avatar">
-                    <p>{{ message.content }}</p>
+            <!-- Assuming `messages` is the variable passed containing responses from the bot -->
+            {% for message in messages %}
+                <div class="message {% if loop.first %} bot {% else %} user {% endif %}">
+                    <!-- Customize the avatar based on who is sending the message -->
+                    <img src="{{ url_for('static', filename='bot-ava.png') if loop.first else url_for('static', filename='user-ava.png') }}" class="avatar">
+                    <p>{{ message }}</p>
                 </div>
             {% endfor %}
         </div>
         <div class="footer">
-            <form action="/" method="post">
+            <form action="/solve_quadratic" method="post">
                 <input type="text" id="input" name="input" placeholder="Ask me anything..." required>
                 <button type="submit">Send</button>
             </form>

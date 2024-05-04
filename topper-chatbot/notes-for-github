@@ -51,3 +51,4 @@ To Activate Virtual Enviroment
 source /workspaces/topper-advisor/.venv/bin/activate
 
 
+pip install requests
