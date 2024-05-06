@@ -12,7 +12,7 @@
 <body>
     <div class="chat-container">
         <div class="header">
-            <img class="img-heading" src="/static/bot-ava.png" alt="">
+            <img class="img-heading" src="{{ url_for('static', filename='bot-ava.png') }}" alt="Bot Avatar">
             <h1 class="chat-heading">Topper Advisor</h1>
         </div>
         <div class="messages" id="messages">
@@ -24,7 +24,7 @@
             {% endfor %}
         </div>
         <div class="footer">
-            <form action="/" method="post">
+            <form action="/find_classes" method="post">
                 <input type="text" id="input" name="input" placeholder="Ask me anything..." required>
                 <button type="submit">Send</button>
             </form>
