@@ -31,9 +31,11 @@ except OpenAIError as e:
 def index():
     print('In index(), sesssion = ' + str(session))
     if 'chat_history' not in session:
-        session['chat_history'] = [
-            {'role': 'bot', 'content': "Hello, I'm Topper, your AI Academic Advisor. I'm here to make your elective selection exciting and tailored just for you!", 'avatar': url_for('static', filename='bot-ava.png')}
-        ]
+        session['chat_history'] = [{
+            'role': 'bot', 
+            'content': "Hello there! I'm Topper, your AI Academic Advisor. I’m here to turn the task of choosing electives into a breeze—let’s find your perfect match hoof-crafted just for you!\nIt might take me a moment to rummage through my digital haystack—please bear with me as I get the hang of this new job.",
+            'avatar': url_for('static', filename='bot-ava.png')
+        }]
     chat_history = session['chat_history']
     return render_template("index.html", chat_history=chat_history)
 
